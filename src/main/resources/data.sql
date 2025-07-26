@@ -1,7 +1,7 @@
 INSERT INTO match (description, match_date, match_time, team_a, team_b, sport)
 VALUES
-('OSFP-PAO', '2021-03-31', '12:00:00', 'OSFP', 'PAO', 'FOOTBALL'),
-('AEK-PAOK', '2021-04-01', '18:00:00', 'AEK', 'PAOK', 'BASKETBALL');
+('OSFP-PAO', '2021-03-31', '12:00:00', 'OSFP', 'PAO', 1),
+('AEK-PAOK', '2021-04-01', '18:00:00', 'AEK', 'PAOK', 2);
 
 INSERT INTO match_odds (match_id, specifier, odd)
 VALUES

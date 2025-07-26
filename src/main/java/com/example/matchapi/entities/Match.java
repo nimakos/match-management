@@ -37,7 +37,7 @@ public class Match {
     @Schema(type = "string", example = "OSFP")
     private String team_b;
 
-    @Enumerated(EnumType.STRING)
+    @Schema(type = "integer", allowableValues = {"1", "2"}, description = "1: FOOTBALL, 2: BASKETBALL")
     private Sport sport;
 
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
