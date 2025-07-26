@@ -1,9 +1,10 @@
 package com.example.matchapi.services;
 
+import com.example.matchapi.components.MatchCacheService;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
-import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
+    private final MatchCacheService matchCacheService;
 
-    public MatchServiceImpl(MatchRepository matchRepository) {
+    public MatchServiceImpl(MatchRepository matchRepository, MatchCacheService matchCacheService) {
         this.matchRepository = matchRepository;
+        this.matchCacheService = matchCacheService;
     }
 
     @Override
@@ -25,8 +28,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public Match getById(Long id) {
-        return matchRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Match with id: " + id + " not found"));
+        return matchCacheService.getCachedMatchById(id);
     }
 
     @Override
@@ -42,8 +44,9 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "matches", key = "#id")
     public Match update(Long id, Match matchToUpdate, boolean clearOdds) {
-        Match existing = getById(id);
+        Match existing = matchCacheService.getCachedMatchById(id);
         existing.setDescription(matchToUpdate.getDescription());
         existing.setMatchDate(matchToUpdate.getMatchDate());
         existing.setMatchTime(matchToUpdate.getMatchTime());
@@ -65,8 +68,9 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "matches", key = "#id")
     public void delete(Long id) {
-        matchRepository.delete(getById(id));
+        matchRepository.delete(matchCacheService.getCachedMatchById(id));
     }
 }
 

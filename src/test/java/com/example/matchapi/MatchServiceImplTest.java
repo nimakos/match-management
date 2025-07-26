@@ -1,5 +1,6 @@
 package com.example.matchapi;
 
+import com.example.matchapi.components.MatchCacheService;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.enums.Sport;
@@ -18,7 +19,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +28,9 @@ public class MatchServiceImplTest {
 
     @Mock
     private MatchRepository matchRepository;
+
+    @Mock
+    private MatchCacheService matchCacheService;
 
     @InjectMocks
     private MatchServiceImpl matchService;
@@ -50,14 +53,15 @@ public class MatchServiceImplTest {
 
     @Test
     public void testGetMatchById() {
-        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchCacheService.getCachedMatchById(1L)).thenReturn(match);
         Match result = matchService.getById(1L);
         assertEquals(1L, result.getId());
     }
 
     @Test
     public void testGetMatchByIdNotFound() {
-        when(matchRepository.findById(99L)).thenReturn(Optional.empty());
+        when(matchCacheService.getCachedMatchById(99L))
+                .thenThrow(new ObjectNotFoundException("Match with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchService.getById(99L));
     }
 
@@ -89,7 +93,7 @@ public class MatchServiceImplTest {
         existing.setId(1L);
         existing.setMatchOdds(new ArrayList<>());
 
-        when(matchRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(matchCacheService.getCachedMatchById(1L)).thenReturn(existing);
         when(matchRepository.save(any())).thenReturn(existing);
 
         MatchOdds newOdds = new MatchOdds();
@@ -106,14 +110,15 @@ public class MatchServiceImplTest {
 
     @Test
     public void testDeleteMatch() {
-        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchCacheService.getCachedMatchById(1L)).thenReturn(match);
         matchService.delete(1L);
         verify(matchRepository).delete(match);
     }
 
     @Test
     public void testDeleteMatchNotFound() {
-        when(matchRepository.findById(1L)).thenReturn(Optional.empty());
+        when(matchCacheService.getCachedMatchById(1L))
+                .thenThrow(new ObjectNotFoundException("Match with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchService.delete(1L));
     }
 }

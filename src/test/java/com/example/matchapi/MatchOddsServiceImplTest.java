@@ -1,5 +1,6 @@
 package com.example.matchapi;
 
+import com.example.matchapi.components.MatchCacheService;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.exceptions.BadRequestException;
@@ -29,6 +30,9 @@ public class MatchOddsServiceImplTest {
     @Mock
     MatchRepository matchRepo;
 
+    @Mock
+    private MatchCacheService matchCacheService;
+
     @InjectMocks
     MatchOddsServiceImpl matchOddsService;
 
@@ -57,14 +61,15 @@ public class MatchOddsServiceImplTest {
 
     @Test
     public void testGetByIdFound() {
-        when(oddsRepo.findById(1L)).thenReturn(Optional.of(odds));
+        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
         MatchOdds result = matchOddsService.getById(1L);
         assertEquals(BigDecimal.valueOf(1.85), result.getOdd());
     }
 
     @Test
     public void testGetByIdNotFound() {
-        when(oddsRepo.findById(99L)).thenReturn(Optional.empty());
+        when(matchCacheService.getCachedMatchOddsById(99L))
+                .thenThrow(new ObjectNotFoundException("Odd with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchOddsService.getById(99L));
     }
 
@@ -85,7 +90,7 @@ public class MatchOddsServiceImplTest {
 
     @Test
     public void testUpdateOddsValid() {
-        when(oddsRepo.findById(1L)).thenReturn(Optional.of(odds));
+        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
         when(oddsRepo.save(any())).thenReturn(odds);
 
         MatchOdds input = new MatchOdds();
@@ -108,14 +113,14 @@ public class MatchOddsServiceImplTest {
         input.setSpecifier("2");
         input.setMatch(differentMatch); // different match
 
-        when(oddsRepo.findById(1L)).thenReturn(Optional.of(odds));
+        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
 
         assertThrows(BadRequestException.class, () -> matchOddsService.update(1L, input));
     }
 
     @Test
     public void testDeleteOdds() {
-        when(oddsRepo.findById(1L)).thenReturn(Optional.of(odds));
+        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
 
         matchOddsService.delete(1L);
         verify(oddsRepo, times(1)).delete(odds);

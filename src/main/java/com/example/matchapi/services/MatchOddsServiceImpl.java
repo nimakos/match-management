@@ -1,11 +1,13 @@
 package com.example.matchapi.services;
 
+import com.example.matchapi.components.MatchCacheService;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.exceptions.BadRequestException;
 import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchOddsRepository;
 import com.example.matchapi.repositories.MatchRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,12 @@ public class MatchOddsServiceImpl implements MatchOddsService {
 
     private final MatchOddsRepository oddsRepo;
     private final MatchRepository matchRepo;
+    private final MatchCacheService matchCacheService;
 
-    public MatchOddsServiceImpl(MatchOddsRepository oddsRepo, MatchRepository matchRepo) {
+    public MatchOddsServiceImpl(MatchOddsRepository oddsRepo, MatchRepository matchRepo, MatchCacheService matchCacheService) {
         this.oddsRepo = oddsRepo;
         this.matchRepo = matchRepo;
+        this.matchCacheService = matchCacheService;
     }
 
     @Override
@@ -29,8 +33,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
 
     @Override
     public MatchOdds getById(Long id) {
-        return oddsRepo.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Odd with id: " + id + " not found"));
+        return matchCacheService.getCachedMatchOddsById(id);
     }
 
     @Override
@@ -44,8 +47,9 @@ public class MatchOddsServiceImpl implements MatchOddsService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "odds", key = "#id")
     public MatchOdds update(Long id, MatchOdds input) {
-        MatchOdds existing = getById(id);
+        MatchOdds existing = matchCacheService.getCachedMatchOddsById(id);
 
         if (input.getMatch() != null && !existing.getMatch().getId().equals(input.getMatch().getId())) {
             throw new BadRequestException("Cannot change associated Match");
@@ -58,8 +62,9 @@ public class MatchOddsServiceImpl implements MatchOddsService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "odds", key = "#id")
     public void delete(Long id) {
-        MatchOdds odds = getById(id);
+        MatchOdds odds = matchCacheService.getCachedMatchOddsById(id);
         oddsRepo.delete(odds);
     }
 }
