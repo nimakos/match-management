@@ -1,6 +1,6 @@
 package com.example.matchapi;
 
-import com.example.matchapi.controllers.MatchController;
+import com.example.matchapi.controllers.MatchControllerImpl;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.enums.Sport;
 import com.example.matchapi.services.MatchService;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(MatchController.class)
-public class MatchControllerTest {
+@WebMvcTest(MatchControllerImpl.class)
+public class MatchControllerImplTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,7 +47,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void testGetAllMatches() throws Exception {
+    public void testGetAllMatchesMatches() throws Exception {
         Mockito.when(matchService.getAll()).thenReturn(Arrays.asList(match));
 
         mockMvc.perform(get("/matches"))

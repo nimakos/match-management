@@ -1,6 +1,6 @@
 package com.example.matchapi;
 
-import com.example.matchapi.controllers.MatchOddsController;
+import com.example.matchapi.controllers.MatchOddsControllerImpl;
 import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.services.MatchOddsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,8 +23,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MatchOddsController.class)
-public class MatchOddsControllerTest {
+@WebMvcTest(MatchOddsControllerImpl.class)
+public class MatchOddsControllerImplTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +43,7 @@ public class MatchOddsControllerTest {
     }
 
     @Test
-    public void testGetAllMatchOdds() throws Exception {
+    public void testGetGetAllOddsMatchOdds() throws Exception {
         Mockito.when(matchOddsService.getAll()).thenReturn(Arrays.asList(odds));
 
         mockMvc.perform(get("/odds"))

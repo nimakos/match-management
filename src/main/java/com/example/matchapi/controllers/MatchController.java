@@ -1,46 +1,28 @@
 package com.example.matchapi.controllers;
 
 import com.example.matchapi.entities.Match;
-import com.example.matchapi.services.MatchService;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/matches")
-public class MatchController {
-
-    private final MatchService matchService;
-
-    public MatchController(MatchService matchService) {
-        this.matchService = matchService;
-    }
-
+@Tag(name = "Matches", description = "Operations related to matches")
+public interface MatchController {
+    @Operation(summary = "Get all matches", description = "Returns a list of all matches")
     @GetMapping
-    public List<Match> all() {
-        return matchService.getAll();
-    }
+    ResponseEntity<List<Match>> getAllMatches();
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Match> getMatch(@PathVariable Long id) {
-        return ResponseEntity.ok(matchService.getById(id));
-    }
+    @Operation(summary = "Get match by ID", description = "Returns a specific match by ID")
+    ResponseEntity<Match> getMatch(Long id);
 
-    @PostMapping
-    public ResponseEntity<Match> createMatch(@RequestBody Match match) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchService.create(match));
-    }
+    @Operation(summary = "Create a match", description = "Creates a new match")
+    ResponseEntity<Match> createMatch(Match match);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Match> updateMatch(@PathVariable Long id, @RequestBody Match match) {
-        return ResponseEntity.ok(matchService.update(id, match));
-    }
+    @Operation(summary = "Update match", description = "Updates a match by ID")
+    ResponseEntity<Match> updateMatch(Long id, Match match);
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {
-        matchService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+    @Operation(summary = "Delete match", description = "Deletes a match by ID")
+    ResponseEntity<Void> deleteMatch(Long id);
 }

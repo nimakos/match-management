@@ -1,46 +1,27 @@
 package com.example.matchapi.controllers;
 
 import com.example.matchapi.entities.MatchOdds;
-import com.example.matchapi.services.MatchOddsService;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/odds")
-public class MatchOddsController {
+@Tag(name = "Match Odds", description = "Operations related to match odds")
+public interface MatchOddsController {
 
-    private final MatchOddsService oddsService;
+    @Operation(summary = "Get all odds", description = "Returns a list of all match odds")
+    ResponseEntity<List<MatchOdds>> getAllOdds();
 
-    public MatchOddsController(MatchOddsService oddsService) {
-        this.oddsService = oddsService;
-    }
+    @Operation(summary = "Get odds by ID", description = "Returns specific odds by ID")
+    ResponseEntity<MatchOdds> getOdd(Long id);
 
-    @GetMapping
-    public List<MatchOdds> all() {
-        return oddsService.getAll();
-    }
+    @Operation(summary = "Create odds", description = "Creates new odds for a match")
+    ResponseEntity<MatchOdds> createOdds(Long matchId, MatchOdds odds);
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MatchOdds> getOdds(@PathVariable Long id) {
-        return ResponseEntity.ok(oddsService.getById(id));
-    }
+    @Operation(summary = "Update odds", description = "Updates match odds by ID")
+    ResponseEntity<MatchOdds> updateOdd(Long id, MatchOdds input);
 
-    @PostMapping
-    public ResponseEntity<MatchOdds> createOdds(@RequestParam Long matchId, @RequestBody MatchOdds odds) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(oddsService.create(matchId, odds));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<MatchOdds> updateOdds(@PathVariable Long id, @RequestBody MatchOdds input) {
-        return ResponseEntity.ok(oddsService.update(id, input));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOdds(@PathVariable Long id) {
-        oddsService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+    @Operation(summary = "Delete odds", description = "Deletes match odds by ID")
+    ResponseEntity<Void> deleteOdd(Long id);
 }
