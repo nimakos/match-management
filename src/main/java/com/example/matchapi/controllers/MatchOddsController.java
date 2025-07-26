@@ -16,7 +16,7 @@ public interface MatchOddsController {
     @Operation(summary = "Get odds by ID", description = "Returns specific odds by ID")
     ResponseEntity<MatchOdds> getOdd(Long id);
 
-    @Operation(summary = "Create odds", description = "Creates new odds for a match")
+    @Operation(summary = "Create odds", description = "Creates new odds for a match by giving the match id")
     ResponseEntity<MatchOdds> createOdds(Long matchId, MatchOdds odds);
 
     @Operation(summary = "Update odds", description = "Updates match odds by ID")
