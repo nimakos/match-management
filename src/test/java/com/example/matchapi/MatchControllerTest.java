@@ -1,15 +1,30 @@
 package com.example.matchapi;
 
 import com.example.matchapi.controllers.MatchController;
+import com.example.matchapi.entities.Match;
+import com.example.matchapi.enums.Sport;
 import com.example.matchapi.services.MatchService;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(MatchController.class)
 public class MatchControllerTest {
@@ -20,9 +35,69 @@ public class MatchControllerTest {
     @MockBean
     private MatchService matchService;
 
+    private Match match;
+
+    @BeforeEach
+    public void setup() {
+        match = new Match();
+        match.setId(1L);
+        match.setTeam_a("Team A");
+        match.setTeam_b("Team B");
+        match.setSport(Sport.FOOTBALL);
+        match.setMatchDate(LocalDate.of(2025, 12, 1));
+    }
+
     @Test
     public void testGetAllMatches() throws Exception {
+        Mockito.when(matchService.getAll()).thenReturn(Arrays.asList(match));
+
         mockMvc.perform(get("/matches"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    public void testGetMatchById() throws Exception {
+        Mockito.when(matchService.getById(1L)).thenReturn(match);
+
+        mockMvc.perform(get("/matches/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.team_a").value("Team A"));
+    }
+
+    @Test
+    public void testCreateMatch() throws Exception {
+        Mockito.when(matchService.create(any(Match.class))).thenReturn(match);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        mockMvc.perform(post("/matches")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(match)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.team_b").value("Team B"));
+    }
+
+    @Test
+    public void testUpdateMatch() throws Exception {
+        match.setTeam_a("Updated Team");
+
+        Mockito.when(matchService.update(eq(1L), any(Match.class))).thenReturn(match);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        mockMvc.perform(put("/matches/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(match)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.team_a").value("Updated Team"));
+    }
+
+    @Test
+    public void testDeleteMatch() throws Exception {
+        mockMvc.perform(delete("/matches/1"))
+                .andExpect(status().isNoContent());
     }
 }
