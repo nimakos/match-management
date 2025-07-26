@@ -6,6 +6,7 @@ import com.example.matchapi.repositories.MatchOddsRepository;
 import com.example.matchapi.repositories.MatchRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     }
 
     @Override
+    @Transactional
     public MatchOdds create(Long matchId, MatchOdds odds) {
         Match match = matchRepo.findById(matchId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match not found"));
@@ -41,6 +43,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     }
 
     @Override
+    @Transactional
     public MatchOdds update(Long id, MatchOdds input) {
         MatchOdds existing = getById(id);
 
@@ -54,6 +57,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         MatchOdds odds = getById(id);
         oddsRepo.delete(odds);

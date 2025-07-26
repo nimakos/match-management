@@ -5,6 +5,7 @@ import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.repositories.MatchRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
+    @Transactional
     public Match create(Match match) {
         if (match.getMatchOdds() != null) {
             for (MatchOdds odds : match.getMatchOdds()) {
@@ -40,6 +42,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
+    @Transactional
     public Match update(Long id, Match matchToUpdate) {
         Match existing = getById(id);
         existing.setDescription(matchToUpdate.getDescription());
@@ -60,6 +63,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         matchRepository.delete(getById(id));
     }
