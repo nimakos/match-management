@@ -18,7 +18,7 @@ public class MatchControllerImpl implements MatchController {
         this.matchService = matchService;
     }
 
-    @GetMapping("getAllMatches")
+    @GetMapping("/getAllMatches")
     public ResponseEntity<List<Match>> getAllMatches() {
         return ResponseEntity.ok(matchService.getAll());
     }

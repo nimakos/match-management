@@ -47,7 +47,7 @@ public class MatchOddsControllerImplTest {
     public void testGetGetAllOddsMatchOdds() throws Exception {
         Mockito.when(matchOddsService.getAll()).thenReturn(Collections.singletonList(odds));
 
-        mockMvc.perform(get("/odds"))
+        mockMvc.perform(get("/odds/getAllOds"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
@@ -56,7 +56,7 @@ public class MatchOddsControllerImplTest {
     public void testGetMatchOddsById() throws Exception {
         Mockito.when(matchOddsService.getById(1L)).thenReturn(odds);
 
-        mockMvc.perform(get("/odds/1"))
+        mockMvc.perform(get("/odds/getOdd/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.specifier").value("1"));
     }
@@ -68,7 +68,7 @@ public class MatchOddsControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(post("/odds?matchId=2")
+        mockMvc.perform(post("/odds/createOdd?matchId=2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(odds)))
                 .andExpect(status().isCreated())
@@ -83,7 +83,7 @@ public class MatchOddsControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(put("/odds/1")
+        mockMvc.perform(put("/odds/updateOdd/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(odds)))
                 .andExpect(status().isOk())
@@ -92,7 +92,7 @@ public class MatchOddsControllerImplTest {
 
     @Test
     public void testDeleteMatchOdds() throws Exception {
-        mockMvc.perform(delete("/odds/1"))
+        mockMvc.perform(delete("/odds/deleteOdd/1"))
                 .andExpect(status().isNoContent());
     }
 }

@@ -42,7 +42,7 @@ public class ApplicationIntegrationTest {
 
     @Test
     public void testGetAllMatches() {
-        ResponseEntity<String> response = restTemplate.getForEntity(url("/matches"), String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(url("/matches/getAllMatches"), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -54,11 +54,11 @@ public class ApplicationIntegrationTest {
         match.setSport(Sport.FOOTBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
 
-        ResponseEntity<Match> createResp = restTemplate.postForEntity(url("/matches"), match, Match.class);
+        ResponseEntity<Match> createResp = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class);
         assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Long matchId = createResp.getBody().getId();
 
-        ResponseEntity<Match> getResp = restTemplate.getForEntity(url("/matches/" + matchId), Match.class);
+        ResponseEntity<Match> getResp = restTemplate.getForEntity(url("/matches/getMatch/" + matchId), Match.class);
         assertThat(getResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResp.getBody().getTeam_a()).isEqualTo("Alpha");
     }
@@ -71,18 +71,18 @@ public class ApplicationIntegrationTest {
         match.setSport(Sport.FOOTBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
 
-        Match created = restTemplate.postForEntity(url("/matches"), match, Match.class).getBody();
+        Match created = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class).getBody();
 
         created.setTeam_a("Updated Team X");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Match> entity = new HttpEntity<>(created, headers);
-        ResponseEntity<Match> updateResp = restTemplate.exchange(url("/matches/" + created.getId()), HttpMethod.PUT, entity, Match.class);
+        ResponseEntity<Match> updateResp = restTemplate.exchange(url("/matches/updateMatch/" + created.getId()), HttpMethod.PUT, entity, Match.class);
         assertThat(updateResp.getBody().getTeam_a()).isEqualTo("Updated Team X");
 
-        restTemplate.delete(url("/matches/" + created.getId()));
+        restTemplate.delete(url("/matches/deleteMatch/" + created.getId()));
 
-        ResponseEntity<String> getAfterDelete = restTemplate.getForEntity(url("/matches/" + created.getId()), String.class);
+        ResponseEntity<String> getAfterDelete = restTemplate.getForEntity(url("/matches/getMatch/" + created.getId()), String.class);
         assertThat(getAfterDelete.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND); // due to lack of NotFound handling
     }
 
@@ -93,19 +93,19 @@ public class ApplicationIntegrationTest {
         match.setTeam_b("Odds B");
         match.setSport(Sport.BASKETBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
-        Match createdMatch = restTemplate.postForEntity(url("/matches"), match, Match.class).getBody();
+        Match createdMatch = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class).getBody();
 
         MatchOdds odds = new MatchOdds();
         odds.setSpecifier("1");
         odds.setOdd(BigDecimal.valueOf(1.75));
 
         ResponseEntity<MatchOdds> oddsResp = restTemplate.postForEntity(
-                url("/odds?matchId=" + createdMatch.getId()), odds, MatchOdds.class
+                url("/odds/createOdd?matchId=" + createdMatch.getId()), odds, MatchOdds.class
         );
         assertThat(oddsResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Long oddsId = oddsResp.getBody().getId();
 
-        ResponseEntity<MatchOdds> getOddsResp = restTemplate.getForEntity(url("/odds/" + oddsId), MatchOdds.class);
+        ResponseEntity<MatchOdds> getOddsResp = restTemplate.getForEntity(url("/odds/getOdd/" + oddsId), MatchOdds.class);
         assertThat(getOddsResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getOddsResp.getBody().getSpecifier()).isEqualTo("1");
     }
