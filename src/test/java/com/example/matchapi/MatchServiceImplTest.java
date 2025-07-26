@@ -3,6 +3,7 @@ package com.example.matchapi;
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
 import com.example.matchapi.enums.Sport;
+import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchRepository;
 import com.example.matchapi.services.MatchServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,14 +11,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class MatchServiceImplTest {
@@ -54,7 +58,7 @@ public class MatchServiceImplTest {
     @Test
     public void testGetMatchByIdNotFound() {
         when(matchRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> matchService.getById(99L));
+        assertThrows(ObjectNotFoundException.class, () -> matchService.getById(99L));
     }
 
     @Test
@@ -110,6 +114,6 @@ public class MatchServiceImplTest {
     @Test
     public void testDeleteMatchNotFound() {
         when(matchRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> matchService.delete(1L));
+        assertThrows(ObjectNotFoundException.class, () -> matchService.delete(1L));
     }
 }

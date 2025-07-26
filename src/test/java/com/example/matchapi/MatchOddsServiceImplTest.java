@@ -2,6 +2,8 @@ package com.example.matchapi;
 
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
+import com.example.matchapi.exceptions.BadRequestException;
+import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchOddsRepository;
 import com.example.matchapi.repositories.MatchRepository;
 import com.example.matchapi.services.MatchOddsServiceImpl;
@@ -64,7 +66,7 @@ public class MatchOddsServiceImplTest {
     @Test
     public void testGetByIdNotFound() {
         when(oddsRepo.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> matchOddsService.getById(99L));
+        assertThrows(ObjectNotFoundException.class, () -> matchOddsService.getById(99L));
     }
 
     @Test
@@ -79,7 +81,7 @@ public class MatchOddsServiceImplTest {
     @Test
     public void testCreateOddsWithInvalidMatch() {
         when(matchRepo.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> matchOddsService.create(1L, odds));
+        assertThrows(ObjectNotFoundException.class, () -> matchOddsService.create(1L, odds));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class MatchOddsServiceImplTest {
 
         when(oddsRepo.findById(1L)).thenReturn(Optional.of(odds));
 
-        assertThrows(ResponseStatusException.class, () -> matchOddsService.update(1L, input));
+        assertThrows(BadRequestException.class, () -> matchOddsService.update(1L, input));
     }
 
     @Test

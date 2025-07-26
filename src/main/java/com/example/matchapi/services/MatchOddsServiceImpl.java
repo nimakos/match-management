@@ -2,12 +2,12 @@ package com.example.matchapi.services;
 
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
+import com.example.matchapi.exceptions.BadRequestException;
+import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchOddsRepository;
 import com.example.matchapi.repositories.MatchRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,14 +30,14 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     @Override
     public MatchOdds getById(Long id) {
         return oddsRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Odds not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Odd with id: " + id + " not found"));
     }
 
     @Override
     @Transactional
     public MatchOdds create(Long matchId, MatchOdds odds) {
         Match match = matchRepo.findById(matchId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Match with id: " + matchId + " not found"));
         odds.setMatch(match);
         return oddsRepo.save(odds);
     }
@@ -48,7 +48,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
         MatchOdds existing = getById(id);
 
         if (input.getMatch() != null && !existing.getMatch().getId().equals(input.getMatch().getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot change associated Match");
+            throw new BadRequestException("Cannot change associated Match");
         }
 
         existing.setOdd(input.getOdd());

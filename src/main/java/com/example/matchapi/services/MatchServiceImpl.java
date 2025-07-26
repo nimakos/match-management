@@ -2,11 +2,10 @@ package com.example.matchapi.services;
 
 import com.example.matchapi.entities.Match;
 import com.example.matchapi.entities.MatchOdds;
+import com.example.matchapi.exceptions.ObjectNotFoundException;
 import com.example.matchapi.repositories.MatchRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public Match getById(Long id) {
         return matchRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Match with id: " + id + " not found"));
     }
 
     @Override
