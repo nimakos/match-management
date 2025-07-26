@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +49,7 @@ public class MatchControllerImplTest {
 
     @Test
     public void testGetAllMatchesMatches() throws Exception {
-        Mockito.when(matchService.getAll()).thenReturn(Arrays.asList(match));
+        Mockito.when(matchService.getAll()).thenReturn(Collections.singletonList(match));
 
         mockMvc.perform(get("/matches"))
                 .andExpect(status().isOk())

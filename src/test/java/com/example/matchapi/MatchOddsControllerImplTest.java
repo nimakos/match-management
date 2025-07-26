@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +45,7 @@ public class MatchOddsControllerImplTest {
 
     @Test
     public void testGetGetAllOddsMatchOdds() throws Exception {
-        Mockito.when(matchOddsService.getAll()).thenReturn(Arrays.asList(odds));
+        Mockito.when(matchOddsService.getAll()).thenReturn(Collections.singletonList(odds));
 
         mockMvc.perform(get("/odds"))
                 .andExpect(status().isOk())
