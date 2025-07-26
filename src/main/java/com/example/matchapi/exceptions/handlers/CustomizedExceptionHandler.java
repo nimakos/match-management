@@ -88,6 +88,7 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Wrong HTTP method used (e.g., POST instead of PUT)
+    @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex,
             @Nonnull HttpHeaders headers,
