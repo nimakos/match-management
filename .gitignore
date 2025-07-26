@@ -1,0 +1,63 @@
+# === Java ===
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# === Maven ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# === Gradle ===
+/build/
+.gradle/
+/out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# === OS / System Files ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+
+# === Logs ===
+*.log
+logs/
+*.pid
+
+# === Environment & Config ===
+.env
+*.properties.local
+*.yml.local
+application-dev.yml
+application-dev.properties
+.vscode/
+
+# === Coverage / Reports ===
+/coverage/
+/test-output/
+/jacoco.exec
+/reports/
+
+# === Misc ===
+*.bak
+*.tmp
+*.orig
+*.rej
+
+# === Node Modules (if full-stack) ===
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# === Docker ===
+/*.env
+/docker-compose.override.yml
