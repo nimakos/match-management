@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.matchapi.mappings.Mappings.*;
+
 @RestController
-@RequestMapping("/odds")
+@RequestMapping(ODDS)
 public class MatchOddsControllerImpl implements MatchOddsController {
 
     private final MatchOddsService oddsService;
@@ -18,27 +20,27 @@ public class MatchOddsControllerImpl implements MatchOddsController {
         this.oddsService = oddsService;
     }
 
-    @GetMapping("/getAllOds")
+    @GetMapping(GET_ALL_ODDS)
     public ResponseEntity<List<MatchOdds>> getAllOdds() {
         return ResponseEntity.ok(oddsService.getAll());
     }
 
-    @GetMapping("/getOdd/{id}")
+    @GetMapping(GET_ODD)
     public ResponseEntity<MatchOdds> getOdd(@PathVariable Long id) {
         return ResponseEntity.ok(oddsService.getById(id));
     }
 
-    @PostMapping("/createOdd")
+    @PostMapping(CREATE_ODD)
     public ResponseEntity<MatchOdds> createOdds(@RequestParam Long matchId, @RequestBody MatchOdds odds) {
         return ResponseEntity.status(HttpStatus.CREATED).body(oddsService.create(matchId, odds));
     }
 
-    @PutMapping("/updateOdd/{id}")
+    @PutMapping(UPDATE_ODD)
     public ResponseEntity<MatchOdds> updateOdd(@PathVariable Long id, @RequestBody MatchOdds input) {
         return ResponseEntity.ok(oddsService.update(id, input));
     }
 
-    @DeleteMapping("/deleteOdd/{id}")
+    @DeleteMapping(DELETE_ODD)
     public ResponseEntity<Void> deleteOdd(@PathVariable Long id) {
         oddsService.delete(id);
         return ResponseEntity.noContent().build();

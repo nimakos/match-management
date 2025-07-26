@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static com.example.matchapi.mappings.Mappings.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,7 +48,7 @@ public class MatchOddsControllerImplTest {
     public void testGetGetAllOddsMatchOdds() throws Exception {
         Mockito.when(matchOddsService.getAll()).thenReturn(Collections.singletonList(odds));
 
-        mockMvc.perform(get("/odds/getAllOds"))
+        mockMvc.perform(get(ODDS + GET_ALL_ODDS))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
@@ -56,7 +57,7 @@ public class MatchOddsControllerImplTest {
     public void testGetMatchOddsById() throws Exception {
         Mockito.when(matchOddsService.getById(1L)).thenReturn(odds);
 
-        mockMvc.perform(get("/odds/getOdd/1"))
+        mockMvc.perform(get(ODDS + GET_ODD.replace("{id}", String.valueOf(1))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.specifier").value("1"));
     }
@@ -68,7 +69,7 @@ public class MatchOddsControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(post("/odds/createOdd?matchId=2")
+        mockMvc.perform(post(ODDS + CREATE_ODD + "?matchId=2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(odds)))
                 .andExpect(status().isCreated())
@@ -83,7 +84,7 @@ public class MatchOddsControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(put("/odds/updateOdd/1")
+        mockMvc.perform(put(ODDS + UPDATE_ODD.replace("{id}", String.valueOf(1)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(odds)))
                 .andExpect(status().isOk())
@@ -92,7 +93,7 @@ public class MatchOddsControllerImplTest {
 
     @Test
     public void testDeleteMatchOdds() throws Exception {
-        mockMvc.perform(delete("/odds/deleteOdd/1"))
+        mockMvc.perform(delete(ODDS + DELETE_ODD.replace("{id}", String.valueOf(1))))
                 .andExpect(status().isNoContent());
     }
 }

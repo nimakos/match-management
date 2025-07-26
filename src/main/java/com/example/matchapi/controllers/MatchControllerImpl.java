@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.matchapi.mappings.Mappings.*;
+
 @RestController
-@RequestMapping("/matches")
+@RequestMapping(MATCHES)
 public class MatchControllerImpl implements MatchController {
 
     private final MatchService matchService;
@@ -18,27 +20,27 @@ public class MatchControllerImpl implements MatchController {
         this.matchService = matchService;
     }
 
-    @GetMapping("/getAllMatches")
+    @GetMapping(GET_MATCHES)
     public ResponseEntity<List<Match>> getAllMatches() {
         return ResponseEntity.ok(matchService.getAll());
     }
 
-    @GetMapping("/getMatch/{id}")
+    @GetMapping(GET_MATCH)
     public ResponseEntity<Match> getMatch(@PathVariable Long id) {
         return ResponseEntity.ok(matchService.getById(id));
     }
 
-    @PostMapping("/createMatch")
+    @PostMapping(CREATE_MATCH)
     public ResponseEntity<Match> createMatch(@RequestBody Match match) {
         return ResponseEntity.status(HttpStatus.CREATED).body(matchService.create(match));
     }
 
-    @PutMapping("/updateMatch/{id}")
+    @PutMapping(UPDATE_MATCH)
     public ResponseEntity<Match> updateMatch(@PathVariable Long id, @RequestBody Match match) {
         return ResponseEntity.ok(matchService.update(id, match));
     }
 
-    @DeleteMapping("/deleteMatch/{id}")
+    @DeleteMapping(DELETE_MATCH)
     public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {
         matchService.delete(id);
         return ResponseEntity.noContent().build();

@@ -13,6 +13,7 @@ import org.springframework.http.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.example.matchapi.mappings.Mappings.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,19 +31,19 @@ public class ApplicationIntegrationTest {
 
     @Test
     public void testMatchEndpointAvailable() {
-        String body = this.restTemplate.getForObject(url("/matches"), String.class);
+        String body = this.restTemplate.getForObject(url(MATCHES), String.class);
         assertThat(body).isNotNull();
     }
 
     @Test
     public void testMatchOddsEndpointAvailable() {
-        String body = this.restTemplate.getForObject(url("/odds"), String.class);
+        String body = this.restTemplate.getForObject(url(ODDS), String.class);
         assertThat(body).isNotNull();
     }
 
     @Test
     public void testGetAllMatches() {
-        ResponseEntity<String> response = restTemplate.getForEntity(url("/matches/getAllMatches"), String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(url(MATCHES + GET_MATCHES), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -54,11 +55,11 @@ public class ApplicationIntegrationTest {
         match.setSport(Sport.FOOTBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
 
-        ResponseEntity<Match> createResp = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class);
+        ResponseEntity<Match> createResp = restTemplate.postForEntity(url(MATCHES + CREATE_MATCH), match, Match.class);
         assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Long matchId = createResp.getBody().getId();
 
-        ResponseEntity<Match> getResp = restTemplate.getForEntity(url("/matches/getMatch/" + matchId), Match.class);
+        ResponseEntity<Match> getResp = restTemplate.getForEntity(url(MATCHES + GET_MATCH.replace("{id}", String.valueOf(matchId))), Match.class);
         assertThat(getResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResp.getBody().getTeam_a()).isEqualTo("Alpha");
     }
@@ -71,18 +72,18 @@ public class ApplicationIntegrationTest {
         match.setSport(Sport.FOOTBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
 
-        Match created = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class).getBody();
+        Match created = restTemplate.postForEntity(url(MATCHES + CREATE_MATCH), match, Match.class).getBody();
 
         created.setTeam_a("Updated Team X");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Match> entity = new HttpEntity<>(created, headers);
-        ResponseEntity<Match> updateResp = restTemplate.exchange(url("/matches/updateMatch/" + created.getId()), HttpMethod.PUT, entity, Match.class);
+        ResponseEntity<Match> updateResp = restTemplate.exchange(url(MATCHES + UPDATE_MATCH.replace("{id}", String.valueOf(created.getId()))), HttpMethod.PUT, entity, Match.class);
         assertThat(updateResp.getBody().getTeam_a()).isEqualTo("Updated Team X");
 
-        restTemplate.delete(url("/matches/deleteMatch/" + created.getId()));
+        restTemplate.delete(url(MATCHES + DELETE_MATCH.replace("{id}", String.valueOf(created.getId()))));
 
-        ResponseEntity<String> getAfterDelete = restTemplate.getForEntity(url("/matches/getMatch/" + created.getId()), String.class);
+        ResponseEntity<String> getAfterDelete = restTemplate.getForEntity(url(MATCHES + GET_MATCH.replace("{id}", String.valueOf(created.getId()))), String.class);
         assertThat(getAfterDelete.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND); // due to lack of NotFound handling
     }
 
@@ -93,19 +94,19 @@ public class ApplicationIntegrationTest {
         match.setTeam_b("Odds B");
         match.setSport(Sport.BASKETBALL);
         match.setMatchDate(LocalDate.of(2025, 12, 1));
-        Match createdMatch = restTemplate.postForEntity(url("/matches/createMatch"), match, Match.class).getBody();
+        Match createdMatch = restTemplate.postForEntity(url(MATCHES + CREATE_MATCH), match, Match.class).getBody();
 
         MatchOdds odds = new MatchOdds();
         odds.setSpecifier("1");
         odds.setOdd(BigDecimal.valueOf(1.75));
 
         ResponseEntity<MatchOdds> oddsResp = restTemplate.postForEntity(
-                url("/odds/createOdd?matchId=" + createdMatch.getId()), odds, MatchOdds.class
+                url(ODDS + CREATE_ODD + "?matchId=" + createdMatch.getId()), odds, MatchOdds.class
         );
         assertThat(oddsResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Long oddsId = oddsResp.getBody().getId();
 
-        ResponseEntity<MatchOdds> getOddsResp = restTemplate.getForEntity(url("/odds/getOdd/" + oddsId), MatchOdds.class);
+        ResponseEntity<MatchOdds> getOddsResp = restTemplate.getForEntity(url(ODDS + GET_ODD.replace("{id}", String.valueOf(oddsId))), MatchOdds.class);
         assertThat(getOddsResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getOddsResp.getBody().getSpecifier()).isEqualTo("1");
     }

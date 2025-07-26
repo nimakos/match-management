@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.util.Collections;
 
+import static com.example.matchapi.mappings.Mappings.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,7 +51,7 @@ public class MatchControllerImplTest {
     public void testGetAllMatchesMatches() throws Exception {
         Mockito.when(matchService.getAll()).thenReturn(Collections.singletonList(match));
 
-        mockMvc.perform(get("/matches/getAllMatches"))
+        mockMvc.perform(get(MATCHES + GET_MATCHES))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
@@ -59,7 +60,7 @@ public class MatchControllerImplTest {
     public void testGetMatchById() throws Exception {
         Mockito.when(matchService.getById(1L)).thenReturn(match);
 
-        mockMvc.perform(get("/matches/getMatch/1"))
+        mockMvc.perform(get(MATCHES + GET_MATCH.replace("{id}", String.valueOf(1))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.team_a").value("Team A"));
     }
@@ -71,7 +72,7 @@ public class MatchControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(post("/matches/createMatch")
+        mockMvc.perform(post(MATCHES + CREATE_MATCH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(match)))
                 .andExpect(status().isCreated())
@@ -87,7 +88,7 @@ public class MatchControllerImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        mockMvc.perform(put("/matches/updateMatch/1")
+        mockMvc.perform(put(MATCHES + UPDATE_MATCH.replace("{id}", String.valueOf(1)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(match)))
                 .andExpect(status().isOk())
@@ -96,7 +97,7 @@ public class MatchControllerImplTest {
 
     @Test
     public void testDeleteMatch() throws Exception {
-        mockMvc.perform(delete("/matches/deleteMatch/1"))
+        mockMvc.perform(delete(MATCHES + DELETE_MATCH.replace("{id}", String.valueOf(1))))
                 .andExpect(status().isNoContent());
     }
 }

@@ -76,7 +76,7 @@ public class MatchServiceImplTest {
 
         Match result = matchService.create(match);
         assertEquals("1", result.getMatchOdds().get(0).getSpecifier());
-        assertEquals(result, result.getMatchOdds().get(0).getMatch());  // linked
+        assertEquals(result, result.getMatchOdds().get(0).getMatch());
     }
 
     @Test
