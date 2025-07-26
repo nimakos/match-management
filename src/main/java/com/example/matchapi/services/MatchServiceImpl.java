@@ -55,10 +55,10 @@ public class MatchServiceImpl implements MatchService {
             existing.getMatchOdds().clear();
         }
         if (matchToUpdate.getMatchOdds() != null) {
-            for (MatchOdds odds : matchToUpdate.getMatchOdds()) {
+            matchToUpdate.getMatchOdds().forEach(odds -> {
                 odds.setMatch(existing);
                 existing.getMatchOdds().add(odds);
-            }
+            });
         }
         return matchRepository.save(existing);
     }
