@@ -78,7 +78,11 @@ public class ApplicationIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Match> entity = new HttpEntity<>(created, headers);
-        ResponseEntity<Match> updateResp = restTemplate.exchange(url(MATCHES + UPDATE_MATCH.replace("{id}", String.valueOf(created.getId()))), HttpMethod.PUT, entity, Match.class);
+        ResponseEntity<Match> updateResp = restTemplate.exchange(
+                url(MATCHES + UPDATE_MATCH.replace("{id}", String.valueOf(created.getId()))) + "?clearOdds=false",
+                HttpMethod.PUT,
+                entity,
+                Match.class);
         assertThat(updateResp.getBody().getTeam_a()).isEqualTo("Updated Team X");
 
         restTemplate.delete(url(MATCHES + DELETE_MATCH.replace("{id}", String.valueOf(created.getId()))));

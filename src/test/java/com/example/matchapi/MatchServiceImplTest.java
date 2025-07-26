@@ -98,7 +98,7 @@ public class MatchServiceImplTest {
 
         match.setMatchOdds(List.of(newOdds));
 
-        Match updated = matchService.update(1L, match);
+        Match updated = matchService.update(1L, match, true);
 
         assertEquals("X", updated.getMatchOdds().get(0).getSpecifier());
         assertEquals("Team A", updated.getTeam_a());

@@ -42,7 +42,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     @Transactional
-    public Match update(Long id, Match matchToUpdate) {
+    public Match update(Long id, Match matchToUpdate, boolean clearOdds) {
         Match existing = getById(id);
         existing.setDescription(matchToUpdate.getDescription());
         existing.setMatchDate(matchToUpdate.getMatchDate());
@@ -51,7 +51,9 @@ public class MatchServiceImpl implements MatchService {
         existing.setTeam_b(matchToUpdate.getTeam_b());
         existing.setSport(matchToUpdate.getSport());
 
-        existing.getMatchOdds().clear();
+        if (clearOdds) {
+            existing.getMatchOdds().clear();
+        }
         if (matchToUpdate.getMatchOdds() != null) {
             for (MatchOdds odds : matchToUpdate.getMatchOdds()) {
                 odds.setMatch(existing);

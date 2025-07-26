@@ -31,7 +31,7 @@ public interface MatchService {
      * @param match The match to update
      * @return The updated match
      */
-    Match update(Long id, Match match);
+    Match update(Long id, Match match, boolean clearOdds);
 
     /**
      * Deletes a match by ID.

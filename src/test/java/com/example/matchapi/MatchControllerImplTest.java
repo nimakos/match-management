@@ -83,13 +83,14 @@ public class MatchControllerImplTest {
     public void testUpdateMatch() throws Exception {
         match.setTeam_a("Updated Team");
 
-        Mockito.when(matchService.update(eq(1L), any(Match.class))).thenReturn(match);
+        Mockito.when(matchService.update(eq(1L), any(Match.class), any(Boolean.class))).thenReturn(match);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
         mockMvc.perform(put(MATCHES + UPDATE_MATCH.replace("{id}", String.valueOf(1)))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("clearOdds", "true")
                         .content(mapper.writeValueAsString(match)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.team_a").value("Updated Team"));

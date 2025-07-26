@@ -36,8 +36,8 @@ public class MatchControllerImpl implements MatchController {
     }
 
     @PutMapping(UPDATE_MATCH)
-    public ResponseEntity<Match> updateMatch(@PathVariable Long id, @RequestBody Match match) {
-        return ResponseEntity.ok(matchService.update(id, match));
+    public ResponseEntity<Match> updateMatch(@PathVariable Long id, @RequestBody Match match, @RequestParam Boolean clearOdds) {
+        return ResponseEntity.ok(matchService.update(id, match, clearOdds));
     }
 
     @DeleteMapping(DELETE_MATCH)
