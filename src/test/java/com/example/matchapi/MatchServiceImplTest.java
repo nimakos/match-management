@@ -53,14 +53,14 @@ public class MatchServiceImplTest {
 
     @Test
     public void testGetMatchById() {
-        when(matchCacheService.getCachedMatchById(1L)).thenReturn(match);
+        when(matchCacheService.geMatchById(1L)).thenReturn(match);
         Match result = matchService.getById(1L);
         assertEquals(1L, result.getId());
     }
 
     @Test
     public void testGetMatchByIdNotFound() {
-        when(matchCacheService.getCachedMatchById(99L))
+        when(matchCacheService.geMatchById(99L))
                 .thenThrow(new ObjectNotFoundException("Match with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchService.getById(99L));
     }
@@ -93,7 +93,7 @@ public class MatchServiceImplTest {
         existing.setId(1L);
         existing.setMatchOdds(new ArrayList<>());
 
-        when(matchCacheService.getCachedMatchById(1L)).thenReturn(existing);
+        when(matchCacheService.geMatchById(1L)).thenReturn(existing);
         when(matchRepository.save(any())).thenReturn(existing);
 
         MatchOdds newOdds = new MatchOdds();
@@ -110,14 +110,14 @@ public class MatchServiceImplTest {
 
     @Test
     public void testDeleteMatch() {
-        when(matchCacheService.getCachedMatchById(1L)).thenReturn(match);
+        when(matchCacheService.geMatchById(1L)).thenReturn(match);
         matchService.delete(1L);
         verify(matchRepository).delete(match);
     }
 
     @Test
     public void testDeleteMatchNotFound() {
-        when(matchCacheService.getCachedMatchById(1L))
+        when(matchCacheService.geMatchById(1L))
                 .thenThrow(new ObjectNotFoundException("Match with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchService.delete(1L));
     }

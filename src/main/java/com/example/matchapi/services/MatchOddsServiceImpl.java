@@ -33,7 +33,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
 
     @Override
     public MatchOdds getById(Long id) {
-        return matchCacheService.getCachedMatchOddsById(id);
+        return matchCacheService.getMatchOddById(id);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     @Transactional
     @CacheEvict(value = "odds", key = "#id")
     public MatchOdds update(Long id, MatchOdds input) {
-        MatchOdds existing = matchCacheService.getCachedMatchOddsById(id);
+        MatchOdds existing = matchCacheService.getMatchOddById(id);
 
         if (input.getMatch() != null && !existing.getMatch().getId().equals(input.getMatch().getId())) {
             throw new BadRequestException("Cannot change associated Match");
@@ -64,7 +64,7 @@ public class MatchOddsServiceImpl implements MatchOddsService {
     @Transactional
     @CacheEvict(value = "odds", key = "#id")
     public void delete(Long id) {
-        MatchOdds odds = matchCacheService.getCachedMatchOddsById(id);
+        MatchOdds odds = matchCacheService.getMatchOddById(id);
         oddsRepo.delete(odds);
     }
 }

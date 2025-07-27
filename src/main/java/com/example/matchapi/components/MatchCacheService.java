@@ -13,19 +13,20 @@ public class MatchCacheService {
 
     private final MatchRepository matchRepository;
     private final MatchOddsRepository matchOddsRepository;
+
     public MatchCacheService(MatchRepository matchRepository, MatchOddsRepository matchOddsRepository) {
         this.matchRepository = matchRepository;
         this.matchOddsRepository = matchOddsRepository;
     }
 
     @Cacheable(value = "matches", key = "#id")
-    public Match getCachedMatchById(Long id) {
+    public Match geMatchById(Long id) {
         return matchRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Match with id: " + id + " not found"));
     }
 
     @Cacheable(value = "odds", key = "#id")
-    public MatchOdds getCachedMatchOddsById(Long id) {
+    public MatchOdds getMatchOddById(Long id) {
         return matchOddsRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Odd with id: " + id + " not found"));
     }

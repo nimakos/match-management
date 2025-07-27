@@ -61,14 +61,14 @@ public class MatchOddsServiceImplTest {
 
     @Test
     public void testGetByIdFound() {
-        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
+        when(matchCacheService.getMatchOddById(1L)).thenReturn(odds);
         MatchOdds result = matchOddsService.getById(1L);
         assertEquals(BigDecimal.valueOf(1.85), result.getOdd());
     }
 
     @Test
     public void testGetByIdNotFound() {
-        when(matchCacheService.getCachedMatchOddsById(99L))
+        when(matchCacheService.getMatchOddById(99L))
                 .thenThrow(new ObjectNotFoundException("Odd with id: 1 not found"));
         assertThrows(ObjectNotFoundException.class, () -> matchOddsService.getById(99L));
     }
@@ -90,7 +90,7 @@ public class MatchOddsServiceImplTest {
 
     @Test
     public void testUpdateOddsValid() {
-        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
+        when(matchCacheService.getMatchOddById(1L)).thenReturn(odds);
         when(oddsRepo.save(any())).thenReturn(odds);
 
         MatchOdds input = new MatchOdds();
@@ -113,14 +113,14 @@ public class MatchOddsServiceImplTest {
         input.setSpecifier("2");
         input.setMatch(differentMatch); // different match
 
-        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
+        when(matchCacheService.getMatchOddById(1L)).thenReturn(odds);
 
         assertThrows(BadRequestException.class, () -> matchOddsService.update(1L, input));
     }
 
     @Test
     public void testDeleteOdds() {
-        when(matchCacheService.getCachedMatchOddsById(1L)).thenReturn(odds);
+        when(matchCacheService.getMatchOddById(1L)).thenReturn(odds);
 
         matchOddsService.delete(1L);
         verify(oddsRepo, times(1)).delete(odds);

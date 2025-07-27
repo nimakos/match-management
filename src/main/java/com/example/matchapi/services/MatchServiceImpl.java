@@ -28,7 +28,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public Match getById(Long id) {
-        return matchCacheService.getCachedMatchById(id);
+        return matchCacheService.geMatchById(id);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MatchServiceImpl implements MatchService {
     @Transactional
     @CacheEvict(value = "matches", key = "#id")
     public Match update(Long id, Match matchToUpdate, boolean clearOdds) {
-        Match existing = matchCacheService.getCachedMatchById(id);
+        Match existing = matchCacheService.geMatchById(id);
         existing.setDescription(matchToUpdate.getDescription());
         existing.setMatchDate(matchToUpdate.getMatchDate());
         existing.setMatchTime(matchToUpdate.getMatchTime());
@@ -70,7 +70,7 @@ public class MatchServiceImpl implements MatchService {
     @Transactional
     @CacheEvict(value = "matches", key = "#id")
     public void delete(Long id) {
-        matchRepository.delete(matchCacheService.getCachedMatchById(id));
+        matchRepository.delete(matchCacheService.geMatchById(id));
     }
 }
 
