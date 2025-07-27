@@ -1,11 +1,14 @@
 package com.example.matchapi.enums;
 
 import com.example.matchapi.configurations.SportDeserializer;
+import com.example.matchapi.configurations.SportSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 
 @Getter
 
+@JsonSerialize(using = SportSerializer.class)
 @JsonDeserialize(using = SportDeserializer.class)
 public enum Sport {
     FOOTBALL(1),
